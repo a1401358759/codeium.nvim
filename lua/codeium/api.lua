@@ -153,9 +153,7 @@ function Server:new()
 		request("Heartbeat", {
 			metadata = get_request_metadata(),
 		}, function(_, err)
-			if err then
-				notify.warn("heartbeat failed", err)
-			else
+			if not err then
 				healthy = true
 			end
 		end)
@@ -206,7 +204,7 @@ function Server:new()
 			log.debug(j.pid .. ": " .. v)
 		end
 
-		local api_server_url = 'https://' .. config.options.api.host .. ':' .. config.options.api.port
+		local api_server_url = "https://" .. config.options.api.host .. ":" .. config.options.api.port
 		job = io.job({
 			update.get_bin_info().bin,
 			"--api_server_url",
@@ -288,7 +286,7 @@ function Server:new()
 			document = document,
 		}, function(body, err)
 			if err then
-				if err.status == 503 or err.status == 408 then
+				if err.status == 408 or err.status == 502 or err.status == 503 then
 					-- Service Unavailable or Timeout error
 					return complete(false, nil)
 				end
